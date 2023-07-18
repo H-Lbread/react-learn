@@ -31,8 +31,8 @@ export default function Board() {
   // 8 编辑 Square 组件，以从 Board 组件接收 value props。这将需要删除 Square 组件自己的 value state 和按钮的 onClick props
 
   function handleClick(i) {
-
-    const nextSquares = squares.slice()
+    
+    const nextSquares = squares.slice() //创建副本 （不直接改变底层数据）
     nextSquares[i] = 'X'
     setSquares(nextSquares)
   }
@@ -56,3 +56,10 @@ export default function Board() {
     </div>
   )
 }
+
+
+/**
+ * 1、单击左上角的方块运行 button 从 Square 接收到的 onClick props 的函数。Square 组件从 Board 通过 onSquareClick props 接收到该函数。Board 组件直接在 JSX 中定义了该函数。它使用参数 0 调用 handleClick。
+ * 2、handleClick 使用参数（0）将 squares 数组的第一个元素从 null 更新为 X。
+ * 3、Board 组件的 squares state 已更新，因此 Board 及其所有子组件都将重新渲染。这会导致索引为 0 的 Square 组件的 value props 从 null 更改为 X。
+ */
