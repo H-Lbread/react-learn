@@ -30,16 +30,26 @@ export default function Board() {
   const [xIsNext, setXIsNext] = useState(true); // 9 交替落子 ==> 每次落子时 xIsNext 将被翻转以确定下一次游戏 state 将被保存。你将更新 Board 的 handleClick 函数以翻转 xIsNext 的值
 
   const [squares, setSquares] = useState(Array(9).fill(null)); // 6 创建了一个包含九个元素的数组,并将它们中的每一个都设置为 null
+
   // 数组中的每个元素对应于一个 square 的值。稍后填写棋盘时，squares 数组将如下所示： ['O', null, 'X', 'X', 'X', 'O', 'O', null, null]
   // 7 Board 组件需要将 value props 向下传递给它渲染的每个 Square
   // 8 编辑 Square 组件，以从 Board 组件接收 value props。这将需要删除 Square 组件自己的 value state 和按钮的 onClick props
+  function handleQK() {
+    // setSquares({
+    //   squares: Array(9).fill(null),
+    // });
+
+    console.log(squares);
+  }
 
   function handleClick(i) {
     // 11 判断是否存在x或o  若存在return
-    if (squares[i]) {
+    // 13 检查玩家是否获胜calculateWinner(squares)
+    if (squares[i] || calculateWinner(squares)) {
       return;
     }
     const nextSquares = squares.slice(); //创建副本 （不直接改变底层数据）
+    console.log(nextSquares);
     // 10
     if (xIsNext) {
       nextSquares[i] = "X";
@@ -49,8 +59,17 @@ export default function Board() {
     setSquares(nextSquares);
     setXIsNext(!xIsNext);
   }
+
+  const winner = calculateWinner(squares);
+  let status;
+  if (winner) {
+    status = "Winner:" + winner;
+  } else {
+    status = "下一个玩家是：" + (xIsNext ? "X" : "O");
+  }
   return (
     <div>
+      <div className="status">{status}</div>
       <div className="board-row">
         <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
         <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
@@ -66,8 +85,53 @@ export default function Board() {
         <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
         <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
       </div>
+      <button onClick={handleQK}>点击</button>
     </div>
   );
+}
+
+// function Game() {
+//   // 添加一些 state 以跟踪下一个玩家和落子历史：
+//   const [xIsNext, setXIsNext] = useState(true);
+//   const [history, setHistory] = useState([Array(9).fill(null)]);
+//   const currentSquares = history[history.length - 1];
+
+//   function handlePlay(nextSquares) {
+//     // TODO
+//   }
+//   return (
+//     <div className="game">
+//       <div className="game-borad">
+//         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+//       </div>
+//       <div className="game-info">
+//         <ol>{/*TODO*/}</ol>
+//       </div>
+//     </div>
+//   );
+// }
+
+/**
+ * 12 判断获胜
+ */
+function calculateWinner(squares) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i];
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
+    }
+  }
+  return null;
 }
 
 /**
